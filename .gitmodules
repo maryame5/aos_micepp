@@ -1,0 +1,6 @@
+[submodule "aos_micepp_back"]
+	path = aos_micepp_back
+	url = https://github.com/maryame5/aos_micepp_backoffice.git
+[submodule "aos_micepp_public"]
+	path = aos_micepp_public
+	url = https://github.com/maryame5/aos_micepp_public.git
