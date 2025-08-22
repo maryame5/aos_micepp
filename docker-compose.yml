@@ -1,0 +1,120 @@
+services:
+  postgres:
+    container_name: postgres-aos
+    image: postgres:15
+    environment:
+      POSTGRES_USER: aos_pg
+      POSTGRES_PASSWORD: Maryame1234
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: aos_db
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - aos_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aos_pg -d aos_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+  backend_back:
+    container_name: aos-backend_back
+    build:
+      context: ./aos_micepp_back/aos_backend
+    environment:
+      SENDGRID_API_KEY: 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
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aos_db
+      SPRING_DATASOURCE_USERNAME: aos_pg
+      SPRING_DATASOURCE_PASSWORD: Maryame1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: true
+
+      SPRING_MAIL_HOST: smtp.sendgrid.net
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_PROTOCOL: smtp
+      SPRING_MAIL_USERNAME: apikey
+      SPRING_MAIL_PASSWORD: ${SENDGRID_API_KEY}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+      APPLICATION_MAILING_FRONTEND_ACTIVATION_URL: http://localhost:4200/activate-account
+    ports:
+      - "8089:8089"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - aos_network
+
+  frontend_back:
+    container_name: aos-frontend_back
+    build:
+      context: ./aos_micepp_back/aos_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend_back
+    networks:
+      - aos_network
+
+  backend_front:
+    container_name: aos-backend_front
+    build:
+      context: ./aos_micepp_public/aos_backend
+    environment:
+      SENDGRID_API_KEY: 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
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aos_db
+      SPRING_DATASOURCE_USERNAME: aos_pg
+      SPRING_DATASOURCE_PASSWORD: Maryame1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: true
+
+      SPRING_MAIL_HOST: smtp.sendgrid.net
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_PROTOCOL: smtp
+      SPRING_MAIL_USERNAME: apikey
+      SPRING_MAIL_PASSWORD: ${SENDGRID_API_KEY}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+      APPLICATION_MAILING_FRONTEND_ACTIVATION_URL: http://localhost:4200/activate-account
+    ports:
+      - "8090:8089"
+      
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend_back:
+        condition: service_started
+    env_file:
+      - .env
+    networks:
+      - aos_network
+
+  frontend_front:
+    container_name: aos-frontend_front
+    build:
+      context: ./aos_micepp_public/aos_frontend
+    ports:
+      - "4201:80"
+    depends_on:
+      - backend_front
+    networks:
+      - aos_network
+
+networks:
+  aos_network:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local
+
