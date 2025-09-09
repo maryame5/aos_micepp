@@ -37,7 +37,7 @@ INSERT INTO service_info (icon, title, description) VALUES
 ('child_care', 'Colonies de Vacances', 'Organisation de colonies de vacances pour les enfants des employés'),
 ('school', 'Appui Scolaire', 'Soutien scolaire et aide aux frais d''éducation'),
 ('sports', 'Activités Culturelles et Sportives', 'Organisation d''activités culturelles et sportives')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (title) DO NOTHING;
 
 -- Insert services
 INSERT INTO service (nom, type, service_info_id, is_active) VALUES 
