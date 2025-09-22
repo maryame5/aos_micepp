@@ -26,7 +26,7 @@ services:
     build:
       context: ./aos_micepp_back/aos_backend
     environment:
-      SENDGRID_API_KEY: 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
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aos_db
       SPRING_DATASOURCE_USERNAME: aos_pg
@@ -69,7 +69,7 @@ services:
     build:
       context: ./aos_micepp_public/aos_backend
     environment:
-      SENDGRID_API_KEY: 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
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aos_db
       SPRING_DATASOURCE_USERNAME: aos_pg
